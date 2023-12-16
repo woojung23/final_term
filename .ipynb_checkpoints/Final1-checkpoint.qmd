@@ -76,7 +76,52 @@ fig2 = px.density_heatmap(
 fig2 = fig2.update_layout(
     xaxis_title='pickup 시간',
     yaxis_title='요일',
-     coloraxis_colorbar_title='평균거리'
+     coloraxis_colorbar_title='평균이동거리'
+)
+pcol = ['pickup_datetime', 'pickup_longitude', 'pickup_latitude', 'pickup_hour']
+dcol = ['dropoff_datetime', 'dropoff_longitude', 'dropoff_latitude', 'dropoff_hour']
+def transform(df):
+    pickup = df.loc[:,['id']+pcol].set_axis(['id', 'datetime', 'longitude', 'latitude', 'hour'],axis=1).assign(type = 'pickup')
+    dropoff = df.loc[:,['id']+dcol].set_axis(['id', 'datetime', 'longitude', 'latitude', 'hour'],axis=1).assign(type = 'dropoff')
+    return pd.concat([pickup,dropoff],axis=0)
+df_left = df_small.drop(pcol+dcol,axis=1)
+df_right = pd.concat([transform(df) for i, df in df_small.groupby('id')]).reset_index(drop=True)
+df_small2 = df_left.merge(df_right)
+df_small2.head()
+tidydata = df_small2.assign(
+    speed_cut = pd.qcut(df_small2.speed,4)
+).sort_values('speed_cut')
+fig3 = px.line_mapbox(
+    data_frame=tidydata,
+    lat = 'latitude',
+    lon = 'longitude',
+    line_group = 'id',
+    color = 'speed_cut',
+    center = {'lat':40.7322, 'lon':-73.9052},
+    #---#
+    mapbox_style = 'carto-positron',
+    zoom=11
+)
+scatter_data = px.scatter_mapbox(
+    data_frame=tidydata,
+    lat = 'latitude',
+    lon = 'longitude',
+    size = 'passenger_count',
+    size_max = 10,
+    color = 'speed_cut',
+    #---#
+    mapbox_style = 'carto-positron',
+    zoom=11,
+    width = 750,
+    height = 600    
+).data 
+for sd in scatter_data: 
+    fig3.add_trace(sd)
+fig3.update_traces(
+    line={
+        'width':1
+    },
+    opacity=0.8
 )
 ```
 
@@ -89,4 +134,11 @@ fig1.show()
 ```{python}
 #| title: 요일,시간에 따른 평균이동거리 시각화        
 fig2.show()
+```
+
+# 기말고사1-(3)
+
+```{python}
+#| title: 속력별 경로 시각화
+fig3.show()
 ```
