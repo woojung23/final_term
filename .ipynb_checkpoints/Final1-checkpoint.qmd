@@ -142,6 +142,7 @@ fig3 = fig3.update_layout(
 #| title: 요일,시간에 따른 평균속력 시각화        
 fig1.show()
 ```
+## Column {width=50%}
 ```{python}
 #| title: 요일,시간에 따른 평균이동거리 시각화        
 fig2.show()
