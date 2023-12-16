@@ -71,7 +71,7 @@ fig2 = px.density_heatmap(
     z='dist_mean',
     nbinsx=24,
     nbinsy=7,
-    height=300
+    height=500
 )
 fig2 = fig2.update_layout(
     xaxis_title='pickup 시간',
@@ -111,9 +111,7 @@ scatter_data = px.scatter_mapbox(
     color = 'speed_cut',
     #---#
     mapbox_style = 'carto-positron',
-    zoom=11,
-    width = 750,
-    height = 600    
+    zoom=11,    
 ).data 
 for sd in scatter_data:
     sd.name = f"{sd.hovertemplate.split('<br>')[1]} (pickup/dropoff)"
