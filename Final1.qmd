@@ -88,11 +88,11 @@ df_left = df_small.drop(pcol+dcol,axis=1)
 df_right = pd.concat([transform(df) for i, df in df_small.groupby('id')]).reset_index(drop=True)
 df_small2 = df_left.merge(df_right)
 df_small2.head()
-tidydata = df_small2.assign(
-    speed_cut = pd.qcut(df_small2.speed,4)
+tidydata2 = df_small2.assign(
+    speed_cut = pd.qcut(df_small2.speed,4, labels =['매우 느림', '조금 느림', '조금 빠름', '매우 빠름'])
 ).sort_values('speed_cut')
 fig3 = px.line_mapbox(
-    data_frame=tidydata,
+    data_frame=tidydata2,
     lat = 'latitude',
     lon = 'longitude',
     line_group = 'id',
@@ -103,7 +103,7 @@ fig3 = px.line_mapbox(
     zoom=11
 )
 scatter_data = px.scatter_mapbox(
-    data_frame=tidydata,
+    data_frame=tidydata2,
     lat = 'latitude',
     lon = 'longitude',
     size = 'passenger_count',
@@ -115,14 +115,28 @@ scatter_data = px.scatter_mapbox(
     width = 750,
     height = 600    
 ).data 
-for sd in scatter_data: 
+for sd in scatter_data:
+    sd.marker.size = 10
+    sd.name = f"{sd.hovertemplate.split('<br>')[1]} (pickup/dropoff)"
     fig3.add_trace(sd)
-fig3.update_traces(
-    line={
-        'width':1
-    },
-    opacity=0.8
+
+# Line trace 및 Scatter trace 설정
+for i in range(len(fig3.data)):
+    trace = fig3.data[i]
+    if trace.mode == 'lines':
+        trace.line.width = 1
+        trace.opacity = 0.8
+        trace.name = f"{tidydata2['speed_cut'].iloc[i]} (path)"
+    elif trace.mode == 'markers':
+        trace.marker.size = 10
+        trace.name = f"{tidydata2['speed_cut'].iloc[i]} (pickup/dropoff)"
+
+
+fig3 = fig3.update_layout(
+    coloraxis_colorbar_title='평균속력',  
+    legend_title_text='평균속력'
 )
+fig3.show()
 ```
 
 # 기말고사1-(1),(2)
