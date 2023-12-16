@@ -136,7 +136,6 @@ fig3 = fig3.update_layout(
     coloraxis_colorbar_title='평균속력',  
     legend_title_text='평균속력'
 )
-fig3.show()
 ```
 
 # 기말고사1-(1),(2)
