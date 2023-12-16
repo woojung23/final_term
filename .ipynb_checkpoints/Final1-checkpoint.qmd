@@ -55,6 +55,29 @@ fig1 = fig1.update_layout(
      coloraxis_colorbar_title='평균속력'
 )
 
+day_of_week_mapping = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금', 5: '토', 6: '일'}
+tidydata1 = df.pivot_table(
+    index = 'pickup_hour',
+    columns = 'dayofweek',
+    values = 'dist',
+    aggfunc = 'mean'
+).stack().reset_index().rename({0:'dist_mean'},axis=1)
+tidydata1['dayofweek'] = tidydata1['dayofweek'].map(day_of_week_mapping)
+
+fig2 = px.density_heatmap(
+    data_frame=tidydata1,
+    x='pickup_hour',
+    y='dayofweek',
+    z='dist_mean',
+    nbinsx=24,
+    nbinsy=7,
+    height=300
+)
+fig2 = fig2.update_layout(
+    xaxis_title='pickup 시간',
+    yaxis_title='요일',
+     coloraxis_colorbar_title='평균거리'
+)
 ```
 
 # 기말고사1-(1),(2)
@@ -63,15 +86,7 @@ fig1 = fig1.update_layout(
 #| title: 요일,시간에 따른 평균속력 시각화        
 fig1.show()
 ```
-
 ```{python}
 #| title: 요일,시간에 따른 평균이동거리 시각화        
 fig2.show()
-```
-
-# 기말고사1-(3)
-
-```{python}
-#| title: 속력별 경로 시각화
-fig3.show()
 ```
