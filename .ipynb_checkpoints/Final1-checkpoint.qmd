@@ -116,7 +116,6 @@ scatter_data = px.scatter_mapbox(
     height = 600    
 ).data 
 for sd in scatter_data:
-    sd.marker.size =  tidydata2['passenger_count']
     sd.name = f"{sd.hovertemplate.split('<br>')[1]} (pickup/dropoff)"
     fig3.add_trace(sd)
 
@@ -128,7 +127,6 @@ for i in range(len(fig3.data)):
         trace.opacity = 0.8
         trace.name = f"{tidydata2['speed_cut'].iloc[i]} (path)"
     elif trace.mode == 'markers':
-        trace.marker.size = tidydata2['passenger_count']
         trace.name = f"{tidydata2['speed_cut'].iloc[i]} (pickup/dropoff)"
 
 
